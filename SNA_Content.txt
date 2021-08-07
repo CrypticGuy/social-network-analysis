@@ -1,0 +1,23 @@
+Book Cover Page
+
+Picture of Dr. Tanmoy
+Hyperlink
+
+About the book - Backside of book (Paraphrase)
+
+Book BibTex
+
+Table of Content
+
+With every chapter name - Exercise Questions and Related Papers
+
+Notifications
+ - Quiz
+ - Exam
+ - Hackathon
+
+Comments of the experts - Endorsements
+
+Reader's Corner -> Link to exam portal
+
+How to purchase the book?
