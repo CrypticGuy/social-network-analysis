@@ -87,6 +87,10 @@
                 background-color: #efefef;
             }
 
+            .ref-icon:hover {
+                border: 1px rgba(247, 45, 45, 0.6) solid;
+            }
+
         </style>
     </head>
     <body>
@@ -251,6 +255,17 @@
         <script src="table_of_content.js"></script>
         <script>
             
+            $(document).ready(() => {
+                // $('#referenceModal').on('show.bs.modal', function (event) {
+                //     var button = $(event.relatedTarget) // Button that triggered the modal
+                //     var recipient = button.data('whatever') // Extract info from data-* attributes
+                //     // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                //     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                //     var modal = $(this)
+                //     modal.find('.modal-title').text('New message to ' + recipient)
+                //     modal.find('.modal-body input').val(recipient)
+                // })
+            })
                 
             function createTableOfContentsAccordianMain() {
                 let toc_holder = document.getElementById("table_of_contents")
@@ -259,25 +274,35 @@
                     let topic_div = document.createElement('div')
                     topic_div.id = `toc_${chapter_id}`
                     topic_div.classList.add("col-12", "m-0", "p-0")
-                    let topic_button = addCollapseButton(chapter_id, "main", table_of_contents[i]["name"], `${chapter_id}`)
+                    let topic_button = addCollapseButton(chapter_id, "main", table_of_contents[i]["name"], `${chapter_id}`, true)
                     topic_div.appendChild(topic_button)
-
                     topic_div.appendChild(createTableOfContentsAccordianTopic(table_of_contents[i]['topics'], `toc_${chapter_id}_main`, chapter_id))
                     toc_holder.appendChild(topic_div)
                 }
 
             }
 
-            function addCollapseButton(id, prefix, text, pointer) {
+            function refClick(chapter) {
+                // alert('here')
+                let chapIndex = chapter
+                $('#referenceModal').modal();
+                
+            }
+
+            function addCollapseButton(id, prefix, text, pointer, parent=false) {
                 // let topic_holder = document.createElement('div')
                 let topic_button = document.createElement("div")
-                topic_button.classList.add("btn", "btn-block", "text-left", "p-2", "collapsible", 'd-flex', 'flex-row')
+                topic_button.classList.add("btn", "btn-block", "text-left", "p-2", "collapsible", 'd-flex')
                 topic_button.setAttribute("type", "button")
                 topic_button.setAttribute("data-toggle", "collapse")
                 topic_button.setAttribute("data-target", `#toc_${id}_${prefix}`)
                 topic_button.setAttribute("aria-expanded", "false")
                 topic_button.setAttribute("aria-controls", `toc_${id}_${prefix}`)
-                topic_button.innerHTML = `<div>${pointer}. ${text}</div><button onclick='alert("Vasu")' class="btn btn-primary">References</button><span class='coll-indic'></span>`
+                topic_button.innerHTML = `<div class="flex-grow-1">${pointer}. ${text}</div>`
+                if (parent) {
+                    topic_button.innerHTML += `<i class="fas fa-file ref-icon ml-auto mr-4" onclick="refClick(${pointer}); "></i>`
+                }
+                topic_button.innerHTML += `<span class='coll-indic'></span>`
                 return topic_button
             }
 
@@ -286,6 +311,12 @@
                 topic_holder.classList.add("collapse", "col-12", "m-0", "p-2", "border")
                 topic_holder.setAttribute("aria-labelledby", `toc_${chapter}`)
                 topic_holder.setAttribute("data-parent","#table_of_contents")
+                topic_holder.addEventListener("click", function(e) {
+                    if (this !== event.target) {
+                            console.log("DAMN")
+                            return
+                        }
+                })
                 topic_holder.id = id
                 for (let i = 0; i < data.length; i++) {
                     let topic_id = `${chapter}_${i+1}`
@@ -293,6 +324,12 @@
                     topic_div.id = `toc_${topic_id}`
                     topic_div.classList.add("col-12", "m-0", "p-0")
                     let topic_button = addCollapseButton(topic_id, "sub", data[i]["name"], `${chapter}.${i+1}`)
+                    topic_button.addEventListener("click", function(e) {
+                        if (this !== event.target) {
+                            console.log("DAMN")
+                            return
+                        }
+                    })
                     topic_div.appendChild(topic_button)
                     let subtopic_holder = document.createElement('div')
                     subtopic_holder.classList.add("col-12", "m-0", "p-2", "border")
@@ -303,7 +340,6 @@
                         subtopic_holder.innerHTML += `<p class="m-1 p-1">${chapter}.${i+1}.${j+1} ${data[i]["subtopics"][j]}</p>`
                     }
                     if (data[i]['subtopics'].length != 0) {
-                        
                         topic_div.appendChild(subtopic_holder)
                         subtopic_holder.classList.add("collapse")
                     } else {
